@@ -9,7 +9,6 @@ import { getOperationSchema, loadCatalog, searchOperations } from './catalog.js'
 import { createClient } from './client.js';
 import { uploadLocalFile } from './upload.js';
 
-const root = fileURLToPath(new URL('..', import.meta.url));
 const envPath = fileURLToPath(new URL('../.env', import.meta.url));
 if (existsSync(envPath)) loadEnvFile(envPath);
 const catalog = loadCatalog(fileURLToPath(new URL('../openapi.json', import.meta.url)));
