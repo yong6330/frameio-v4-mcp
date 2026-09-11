@@ -1,4 +1,7 @@
 .env
+.oauth-callback
+.oauth-pending.json
+macos/*.app/
 node_modules/
 .DS_Store
 npm-debug.log*

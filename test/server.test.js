@@ -22,11 +22,12 @@ test('advertises Native OAuth helpers and searches all 97 operations over stdio'
 });
 
 test('documents startup, OAuth environment, and probe host', async () => {
-  const [readme, example, ignore, probe] = await Promise.all([
+  const [readme, example, ignore, probe, packageJson] = await Promise.all([
     readFile(new URL('../README.md', import.meta.url), 'utf8'),
     readFile(new URL('../.env.example', import.meta.url), 'utf8'),
     readFile(new URL('../.gitignore', import.meta.url), 'utf8'),
     readFile(new URL('../probe.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../package.json', import.meta.url), 'utf8'),
   ]);
   assert.match(readme, /npm start/);
   assert.match(example, /FRAMEIO_ACCESS_TOKEN=/);
@@ -36,5 +37,7 @@ test('documents startup, OAuth environment, and probe host', async () => {
   assert.match(readme, /OAuth Native App/);
   assert.doesNotMatch(readme, /select \*\*OAuth Web App\*\*/);
   assert.match(ignore, /^\.env$/m);
+  assert.match(ignore, /^\.oauth-callback$/m);
+  assert.match(packageJson, /install:oauth-handler/);
   assert.match(probe, /frameio/);
 });

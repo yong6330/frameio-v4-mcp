@@ -1,18 +1,19 @@
 import { createHash, randomBytes } from 'node:crypto';
-import { readFile, rename, writeFile } from 'node:fs/promises';
+import { readFile, rename, rm, writeFile } from 'node:fs/promises';
 
 const AUTHORIZE_URL = 'https://ims-na1.adobelogin.com/ims/authorize/v2';
 const TOKEN_URL = 'https://ims-na1.adobelogin.com/ims/token/v3';
 
-export function createNativeOAuth({ env = process.env, fetchImpl = fetch }) {
+export function createNativeOAuth({ env = process.env, fetchImpl = fetch, sessionPath, callbackPath }) {
   let pending;
 
-  function start() {
+  async function start() {
     const clientId = required(env, 'ADOBE_CLIENT_ID');
     const redirectUri = required(env, 'ADOBE_REDIRECT_URI');
     const verifier = randomBytes(64).toString('base64url');
     const state = randomBytes(24).toString('base64url');
     pending = { state, verifier };
+    if (sessionPath) await writeFile(sessionPath, JSON.stringify(pending), { mode: 0o600 });
     const url = new URL(AUTHORIZE_URL);
     url.search = new URLSearchParams({
       client_id: clientId,
@@ -27,7 +28,9 @@ export function createNativeOAuth({ env = process.env, fetchImpl = fetch }) {
   }
 
   async function complete(callbackUrl) {
-    if (!pending) throw new Error('Run start_oauth first in the same MCP session');
+    pending ||= sessionPath && JSON.parse(await readFile(sessionPath, 'utf8'));
+    callbackUrl ||= callbackPath && (await readFile(callbackPath, 'utf8')).trim();
+    if (!pending || !callbackUrl) throw new Error('Run start_oauth and complete the browser login first');
     const callback = new URL(callbackUrl);
     if (callback.searchParams.get('error')) throw new Error(`Adobe OAuth failed: ${callback.searchParams.get('error')}`);
     const code = callback.searchParams.get('code');
@@ -41,6 +44,7 @@ export function createNativeOAuth({ env = process.env, fetchImpl = fetch }) {
     const response = await fetchImpl(tokenUrl.toString(), { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body });
     const payload = await response.json();
     if (!response.ok || !payload.access_token) throw new Error(`Adobe token exchange failed (${response.status})`);
+    await Promise.all([sessionPath, callbackPath].filter(Boolean).map(path => rm(path, { force: true })));
     return { accessToken: payload.access_token, refreshToken: payload.refresh_token, tokenType: payload.token_type, expiresIn: payload.expires_in };
   }
 

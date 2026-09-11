@@ -21,10 +21,13 @@ Requires Node.js 20 or newer.
 ```bash
 npm install
 cp .env.example .env
+npm run install:oauth-handler
 npm start
 ```
 
 Keep `.env` private. The server never writes or prints credentials.
+
+Each user normally creates their own OAuth Native App credential and keeps its Client ID, Redirect URI, and generated tokens only in their local `.env`. A shared Client ID requires publishing and approval of a common Adobe application.
 
 ## Adobe Developer Console and OAuth
 
@@ -32,9 +35,10 @@ Keep `.env` private. The server never writes or prints credentials.
 2. Create a Developer Console project. This is an API application, not a Frame.io content project.
 3. Choose **Add API**, select **Frame.io API**, and select **OAuth Native App** for user authentication.
 4. Put the provided Client ID and Redirect URI in `.env` as `ADOBE_CLIENT_ID` and `ADOBE_REDIRECT_URI`. Do not create or store a client secret.
-5. Call `start_oauth`, open its `authorizationUrl` yourself, and approve access. Then pass the full redirected URL to `complete_oauth` in the same MCP session.
-6. `complete_oauth` exchanges the PKCE authorization code and saves the access token to the ignored local `.env` without returning the token in MCP output.
-7. Verify only after login:
+5. On macOS, run `npm run install:oauth-handler` once. It registers the credential's `adobe+…://` Redirect URI scheme and writes callbacks only to the ignored local `.oauth-callback` file.
+6. Restart the MCP host after editing `.env`. Call `start_oauth`, open its `authorizationUrl` yourself, and approve access.
+7. After the native redirect opens, call `complete_oauth` without arguments. It validates the persisted PKCE state, exchanges the code, and saves the access token to the ignored local `.env` without returning the token in MCP output.
+8. Verify only after login:
 
 ```bash
 node probe.mjs verify_connection '{}'

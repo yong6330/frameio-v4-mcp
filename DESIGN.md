@@ -29,7 +29,7 @@ DELETE operations are supported. `invoke_tool` requires `confirm: true` for DELE
 
 ## Authentication
 
-The user creates the Adobe Developer Console project, adds Frame.io V4 API access as an OAuth Native App, and personally completes the browser consent opened from `start_oauth`. `complete_oauth` exchanges the callback code and saves the token to `.env`, which is ignored by Git.
+The user creates the Adobe Developer Console project, adds Frame.io V4 API access as an OAuth Native App, and personally completes the browser consent opened from `start_oauth`. On macOS, the installed native URL handler writes the callback to an ignored local file. `complete_oauth` validates the persisted PKCE state, exchanges the callback code, and saves the token to `.env`, which is ignored by Git.
 
 The server accepts `FRAMEIO_ACCESS_TOKEN`. If Adobe issues a refresh token, `ADOBE_CLIENT_ID` and `ADOBE_REFRESH_TOKEN` allow public-client refresh through Adobe IMS `/ims/token/v3`; no client secret is stored. The server never prints tokens.
 
@@ -50,4 +50,4 @@ The catalog supports upload, version stacks, shares, reviewers, timecoded commen
 
 - Offline self-check against the vendored OpenAPI catalog: 97 unique operations and no unrecognized method/path invocation.
 - Mocked HTTP check for request construction, DELETE confirmation, bounded retry, and chunk boundaries.
-- Live verification stops at `verify_connection` until the user completes Developer Console registration and OAuth login.
+- Live verification requires user-approved OAuth login. It was verified on 2026-09-12 with HTTP 200 responses from `/v4/me`, accounts, workspaces, projects, files, and comments.

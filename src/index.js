@@ -11,10 +11,12 @@ import { createNativeOAuth, saveTokens } from './oauth.js';
 import { uploadLocalFile } from './upload.js';
 
 const envPath = fileURLToPath(new URL('../.env', import.meta.url));
+const oauthSessionPath = fileURLToPath(new URL('../.oauth-pending.json', import.meta.url));
+const oauthCallbackPath = fileURLToPath(new URL('../.oauth-callback', import.meta.url));
 if (existsSync(envPath)) loadEnvFile(envPath);
 const catalog = loadCatalog(fileURLToPath(new URL('../openapi.json', import.meta.url)));
 const api = createClient({ catalog });
-const oauth = createNativeOAuth({});
+const oauth = createNativeOAuth({ sessionPath: oauthSessionPath, callbackPath: oauthCallbackPath });
 const server = new McpServer({ name: 'frameio-v4-mcp', version: '1.0.0' });
 const object = z.record(z.unknown());
 const output = value => ({ content: [{ type: 'text', text: JSON.stringify(value, null, 2) }] });
@@ -28,7 +30,7 @@ server.tool('verify_connection', 'Verify Frame.io V4 OAuth by calling GET /v4/me
 server.tool('start_oauth', 'Create an Adobe Native App PKCE login URL. Open it yourself and approve access.', {}, run(() => oauth.start()));
 
 server.tool('complete_oauth', 'Exchange the callback URL from Adobe after start_oauth and save the access token to .env.', {
-  callback_url: z.string(),
+  callback_url: z.string().optional(),
 }, run(async ({ callback_url }) => {
   const tokens = await oauth.complete(callback_url);
   await saveTokens(envPath, tokens);
