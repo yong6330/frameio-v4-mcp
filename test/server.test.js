@@ -26,7 +26,7 @@ test('documents startup, OAuth environment, and probe host', async () => {
     readFile(new URL('../README.md', import.meta.url), 'utf8'),
     readFile(new URL('../.env.example', import.meta.url), 'utf8'),
     readFile(new URL('../.gitignore', import.meta.url), 'utf8'),
-    readFile(new URL('../../probe.mjs', import.meta.url), 'utf8'),
+    readFile(new URL('../probe.mjs', import.meta.url), 'utf8'),
   ]);
   assert.match(readme, /npm start/);
   assert.match(example, /FRAMEIO_ACCESS_TOKEN=/);

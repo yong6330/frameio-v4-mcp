@@ -35,7 +35,7 @@ Keep `.env` private. The server never writes or prints credentials.
 7. Verify only after login:
 
 ```bash
-node ../probe.mjs frameio verify_connection '{}'
+node probe.mjs verify_connection '{}'
 ```
 
 Official references: [Getting Started](https://developer.adobe.com/frameio/guides/), [Authentication](https://developer.adobe.com/frameio/guides/Authentication/), [Upload](https://developer.adobe.com/frameio/guides/How%20To:%20Upload/), and [OpenAPI](https://api.frame.io/v4/openapi.json).
@@ -45,8 +45,8 @@ Official references: [Getting Started](https://developer.adobe.com/frameio/guide
 Discover the exact API operation before calling it:
 
 ```bash
-node ../probe.mjs frameio search_tools '{"query":"comments"}'
-node ../probe.mjs frameio get_tool_schema '{"operation_id":"comments.index"}'
+node probe.mjs search_tools '{"query":"comments"}'
+node probe.mjs get_tool_schema '{"operation_id":"comments.index"}'
 ```
 
 Timecoded client comments use the documented query parameter:
