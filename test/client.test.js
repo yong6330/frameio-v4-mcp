@@ -54,3 +54,21 @@ test('verifies the authenticated user through /v4/me', async () => {
   assert.equal(url, 'https://api.frame.io/v4/me');
   assert.equal(result.data.data.name, 'Reviewer');
 });
+
+test('refreshes a Native App token as a public client without a client secret', async () => {
+  const requests = [];
+  const client = createClient({
+    catalog,
+    env: { ADOBE_CLIENT_ID: 'native-client', ADOBE_REFRESH_TOKEN: 'refresh-value' },
+    fetchImpl: async (url, options) => {
+      requests.push({ url, options });
+      if (url.startsWith('https://ims-na1.adobelogin.com/ims/token/v3')) return jsonResponse(200, { access_token: 'native-access' });
+      return jsonResponse(200, { data: { id: 'user' } });
+    },
+  });
+  await client.verifyConnection();
+  assert.equal(requests[0].url, 'https://ims-na1.adobelogin.com/ims/token/v3?client_id=native-client');
+  assert.equal(requests[0].options.headers.authorization, undefined);
+  assert.equal(requests[0].options.body.get('client_secret'), null);
+  assert.equal(requests[1].options.headers.authorization, 'Bearer native-access');
+});

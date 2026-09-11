@@ -27,9 +27,9 @@ DELETE operations are supported. `invoke_tool` requires `confirm: true` for DELE
 
 ## Authentication
 
-The user creates the Adobe Developer Console project, adds Frame.io V4 API access, configures the redirect URI, and performs OAuth login. Secrets remain in `.env`, which is ignored by Git.
+The user creates the Adobe Developer Console project, adds Frame.io V4 API access as an OAuth Native App, completes PKCE login, and supplies the resulting token values. Credentials remain in `.env`, which is ignored by Git.
 
-The server accepts `FRAMEIO_ACCESS_TOKEN`. When `ADOBE_CLIENT_ID`, `ADOBE_CLIENT_SECRET`, and `ADOBE_REFRESH_TOKEN` are also present, it may refresh through Adobe IMS `/ims/token/v3`. The server never prints tokens or secrets.
+The server accepts `FRAMEIO_ACCESS_TOKEN`. If Adobe issues a refresh token, `ADOBE_CLIENT_ID` and `ADOBE_REFRESH_TOKEN` allow public-client refresh through Adobe IMS `/ims/token/v3`; no client secret is stored. The server never prints tokens.
 
 ## HTTP behavior
 

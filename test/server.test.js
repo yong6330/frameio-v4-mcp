@@ -31,6 +31,9 @@ test('documents startup, OAuth environment, and probe host', async () => {
   assert.match(readme, /npm start/);
   assert.match(example, /FRAMEIO_ACCESS_TOKEN=/);
   assert.match(example, /ADOBE_REFRESH_TOKEN=/);
+  assert.doesNotMatch(example, /ADOBE_CLIENT_SECRET/);
+  assert.match(readme, /OAuth Native App/);
+  assert.doesNotMatch(readme, /select \*\*OAuth Web App\*\*/);
   assert.match(ignore, /^\.env$/m);
   assert.match(probe, /frameio/);
 });

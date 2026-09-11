@@ -1,6 +1,6 @@
 # Frame.io V4 MCP Implementation Plan
 
-Status: completed 2026-09-11. Offline suite: 12 tests passing. Live OAuth verification remains user-gated.
+Status: completed 2026-09-11. Offline suite: 13 tests passing. Live OAuth verification remains user-gated.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -96,6 +96,6 @@ Status: completed 2026-09-11. Offline suite: 12 tests passing. Live OAuth verifi
 
 - [ ] Extend the server test to assert the documented start command and sample environment names exist.
 - [ ] Run the test and confirm the documentation/configuration assertions fail.
-- [ ] Document Developer Console setup, OAuth Web App redirect requirements, environment variables, live verification boundary, and destructive-operation confirmation; add the Frame.io host to `probe.mjs`.
+- [ ] Document Developer Console setup, OAuth Native App PKCE requirements, environment variables, live verification boundary, and destructive-operation confirmation; add the Frame.io host to `probe.mjs`.
 - [ ] Run `npm test` from `tools/frameio-mcp` and `node ../probe.mjs frameio search_tools '{"query":"comments"}'`.
 - [ ] Re-read `DESIGN.md`, confirm every requirement has a corresponding test or documented live gate, and report the unauthenticated live-test boundary.

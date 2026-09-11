@@ -28,10 +28,10 @@ Keep `.env` private. The server never writes or prints credentials.
 
 1. Sign in to [Adobe Developer Console](https://developer.adobe.com/console) with the Adobe ID used for Frame.io V4.
 2. Create a Developer Console project. This is an API application, not a Frame.io content project.
-3. Choose **Add API**, select **Frame.io API**, and select **OAuth Web App** for user authentication.
-4. Configure the redirect URI used by your OAuth client. For the official Postman flow, use the callback URI shown by Postman and add the same URI pattern in Developer Console.
-5. Request `openid`, `profile`, `offline_access`, and `additional_info.roles`. `offline_access` is needed for a refresh token.
-6. Complete the Adobe login yourself, then place the returned values in `.env`. `FRAMEIO_ACCESS_TOKEN` is enough for a short session; the three `ADOBE_*` credential values enable refresh.
+3. Choose **Add API**, select **Frame.io API**, and select **OAuth Native App** for user authentication.
+4. Use the Native App's authorization-code flow with PKCE. Do not create or store a client secret.
+5. Request `openid`, `profile`, `offline_access`, and `additional_info.roles`. Adobe documents that refresh-token availability depends on the credential and API; the MCP also works with only a short-lived access token.
+6. Complete the Adobe login yourself, then place the returned values in `.env`. `FRAMEIO_ACCESS_TOKEN` is sufficient for a session. If Adobe issues a refresh token, `ADOBE_CLIENT_ID` and `ADOBE_REFRESH_TOKEN` enable public-client refresh without a client secret.
 7. Verify only after login:
 
 ```bash

@@ -7,11 +7,12 @@ export function createClient({ catalog, env = process.env, fetchImpl = fetch, sl
   let accessToken = env.FRAMEIO_ACCESS_TOKEN;
 
   async function refreshAccessToken() {
-    const { ADOBE_CLIENT_ID: clientId, ADOBE_CLIENT_SECRET: clientSecret, ADOBE_REFRESH_TOKEN: refreshToken } = env;
-    if (!clientId || !clientSecret || !refreshToken) throw new Error('Set FRAMEIO_ACCESS_TOKEN or Adobe refresh credentials in .env');
-    const form = new URLSearchParams({ grant_type: 'refresh_token', client_id: clientId, client_secret: clientSecret, refresh_token: refreshToken });
-    if (env.ADOBE_SCOPES) form.set('scope', env.ADOBE_SCOPES);
-    const response = await fetchImpl(TOKEN_URL, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: form });
+    const { ADOBE_CLIENT_ID: clientId, ADOBE_REFRESH_TOKEN: refreshToken } = env;
+    if (!clientId || !refreshToken) throw new Error('Set FRAMEIO_ACCESS_TOKEN or Native App refresh credentials in .env');
+    const url = new URL(TOKEN_URL);
+    url.searchParams.set('client_id', clientId);
+    const form = new URLSearchParams({ grant_type: 'refresh_token', refresh_token: refreshToken });
+    const response = await fetchImpl(url.toString(), { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: form });
     const payload = await parseResponse(response);
     if (!response.ok || !payload?.access_token) throw new Error(`Adobe IMS token refresh failed (${response.status})`);
     accessToken = payload.access_token;
@@ -54,7 +55,7 @@ export function createClient({ catalog, env = process.env, fetchImpl = fetch, sl
       }
       const data = await parseResponse(response);
       if (!response.ok) {
-        const detail = redact(typeof data === 'string' ? data : JSON.stringify(data), [bearer, env.FRAMEIO_ACCESS_TOKEN, env.ADOBE_CLIENT_SECRET, env.ADOBE_REFRESH_TOKEN]);
+        const detail = redact(typeof data === 'string' ? data : JSON.stringify(data), [bearer, env.FRAMEIO_ACCESS_TOKEN, env.ADOBE_REFRESH_TOKEN]);
         throw new Error(`Frame.io ${response.status}: ${detail}`);
       }
       return {
