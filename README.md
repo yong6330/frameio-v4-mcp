@@ -4,6 +4,8 @@ Node.js stdio MCP server backed by Frame.io's official V4 OpenAPI document. It e
 
 ## MCP tools
 
+- `start_oauth` — creates the Adobe Native App PKCE authorization URL
+- `complete_oauth` — exchanges the returned callback code and saves the access token locally
 - `verify_connection` — verifies OAuth with `GET /v4/me`
 - `search_tools` — searches by text, API tag, or HTTP method
 - `get_tool_schema` — returns official parameters and referenced schemas for an `operationId`
@@ -29,9 +31,9 @@ Keep `.env` private. The server never writes or prints credentials.
 1. Sign in to [Adobe Developer Console](https://developer.adobe.com/console) with the Adobe ID used for Frame.io V4.
 2. Create a Developer Console project. This is an API application, not a Frame.io content project.
 3. Choose **Add API**, select **Frame.io API**, and select **OAuth Native App** for user authentication.
-4. Use the Native App's authorization-code flow with PKCE. Do not create or store a client secret.
-5. Request `openid`, `profile`, `offline_access`, and `additional_info.roles`. Adobe documents that refresh-token availability depends on the credential and API; the MCP also works with only a short-lived access token.
-6. Complete the Adobe login yourself, then place the returned values in `.env`. `FRAMEIO_ACCESS_TOKEN` is sufficient for a session. If Adobe issues a refresh token, `ADOBE_CLIENT_ID` and `ADOBE_REFRESH_TOKEN` enable public-client refresh without a client secret.
+4. Put the provided Client ID and Redirect URI in `.env` as `ADOBE_CLIENT_ID` and `ADOBE_REDIRECT_URI`. Do not create or store a client secret.
+5. Call `start_oauth`, open its `authorizationUrl` yourself, and approve access. Then pass the full redirected URL to `complete_oauth` in the same MCP session.
+6. `complete_oauth` exchanges the PKCE authorization code and saves the access token to the ignored local `.env` without returning the token in MCP output.
 7. Verify only after login:
 
 ```bash

@@ -1,6 +1,6 @@
 # Frame.io V4 MCP Implementation Plan
 
-Status: completed 2026-09-11. Offline suite: 13 tests passing. Live OAuth verification remains user-gated.
+Status: completed 2026-09-11. Offline suite: 15 tests passing. Live OAuth verification remains user-gated.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 

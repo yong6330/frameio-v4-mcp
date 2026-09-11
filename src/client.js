@@ -71,7 +71,7 @@ export function createClient({ catalog, env = process.env, fetchImpl = fetch, sl
     throw new Error('Frame.io request exhausted retries');
   }
 
-  return { invoke, verifyConnection: () => invoke({ operationId: 'users.show' }) };
+  return { invoke, setAccessToken: value => { accessToken = value; }, verifyConnection: () => invoke({ operationId: 'users.show' }) };
 }
 
 async function parseResponse(response) {

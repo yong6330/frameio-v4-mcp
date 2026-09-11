@@ -17,6 +17,8 @@ The server must not invent paths or request fields. `openapi.json` is the runtim
 
 ## MCP interface
 
+- `start_oauth`: create an Adobe Native App PKCE authorization URL.
+- `complete_oauth`: validate the returned state, exchange the authorization code, and save the access token to `.env`.
 - `verify_connection`: call `GET /v4/me` and report authenticated user details.
 - `search_tools`: search the 97-operation catalog by text, tag, or HTTP method.
 - `get_tool_schema`: return the documented path/query/request-body schema for one `operationId`.
@@ -27,7 +29,7 @@ DELETE operations are supported. `invoke_tool` requires `confirm: true` for DELE
 
 ## Authentication
 
-The user creates the Adobe Developer Console project, adds Frame.io V4 API access as an OAuth Native App, completes PKCE login, and supplies the resulting token values. Credentials remain in `.env`, which is ignored by Git.
+The user creates the Adobe Developer Console project, adds Frame.io V4 API access as an OAuth Native App, and personally completes the browser consent opened from `start_oauth`. `complete_oauth` exchanges the callback code and saves the token to `.env`, which is ignored by Git.
 
 The server accepts `FRAMEIO_ACCESS_TOKEN`. If Adobe issues a refresh token, `ADOBE_CLIENT_ID` and `ADOBE_REFRESH_TOKEN` allow public-client refresh through Adobe IMS `/ims/token/v3`; no client secret is stored. The server never prints tokens.
 
