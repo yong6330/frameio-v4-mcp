@@ -22,7 +22,7 @@ export async function uploadLocalFile({ client, filePath, accountId, folderId, n
       const chunk = Buffer.allocUnsafe(part.size);
       const { bytesRead } = await handle.read(chunk, 0, part.size, offset);
       if (bytesRead !== part.size) throw new Error(`Short read at byte ${offset}`);
-      const response = await fetchImpl(part.url, { method: 'PUT', headers: { 'x-amz-acl': 'private' }, body: chunk });
+      const response = await fetchImpl(part.url, { method: 'PUT', headers: { 'content-type': file.media_type, 'x-amz-acl': 'private' }, body: chunk });
       if (!response.ok) throw new Error(`Presigned upload failed (${response.status}) at byte ${offset}`);
       offset += part.size;
     }
